@@ -7,15 +7,16 @@ import sys
 
 
 def parse_arguments():
-    rect = True
-    no_op = True
-    action = "gaussian"
+    rect = "none"
+    action = "default"
     if len(sys.argv) > 1:
         # Means we have options.
-        no_op = False
         option_list = sys.argv[1:]
         parser = argparse.ArgumentParser()
         shape_group = parser.add_mutually_exclusive_group()
+        shape_group.add_argument('--none', 
+                                 action="store_true", 
+                                 help='Disable all rects.')
         shape_group.add_argument('--rect', 
                                  action="store_true", 
                                  help='Enable full blur on the face area.')
@@ -36,14 +37,23 @@ def parse_arguments():
                                   help='Let the area color be threshed.')
 
         args = parser.parse_args(sys.argv[1:])
+        if args.none:
+            rect = "none"
 
-        if args.partial:
-            rect = False
+        else:
+            if args.partial:
+                rect = "partial"
+            elif args.rect:
+                rect = "rect"
 
-        if args.thresh:
-            action = "thresh"
+            if args.thresh:
+                action = "thresh"
 
-        return (rect, no_op, action)
+            elif args.gaussian:
+                action = "gaussian"
+
+
+        return (rect, action)
 
 def get_masked_picture(image_copy, blurred_image, roi_corners):
     # create a mask for the ROI and fill in the ROI with (255,255,255) color
@@ -61,7 +71,7 @@ def get_masked_picture(image_copy, blurred_image, roi_corners):
     return final_image
 
 def main():
-    rect, no_op, action = parse_arguments()
+    rect, action = parse_arguments()
     detector = dlib.get_frontal_face_detector()
     # Load the predictor
     predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
@@ -74,11 +84,12 @@ def main():
         try:
             temp = frame.all() != None
         except Exception as e:
-            print(e)
+            print("Please rerun this script again!")
+            exit()
             
         else:
             if temp:
-                if no_op:
+                if rect == "none":
                     cv2.imshow('frame', frame)
 
                 else:
@@ -94,17 +105,18 @@ def main():
                         x2 = face.right() # right point
                         y2 = face.bottom() # bottom point
                         # Create landmark object
+                       
                         landmarks = predictor(image=gray, box=face)
-                        if rect:
+                        if rect == "rect":
                             outer_edge_list = [(x1,y1), 
                                                (x1,y2), 
                                                (x2,y2), 
                                                (x2,y1)]
 
-                        else:
+                        elif rect == "partial":
                             range_list = [i for i in range(17)] + \
                                          [i for i in range(26,16,-1)]
-                            outer_edge_list = [(landmarks.part(n).x, 
+                            outer_edge_list = [(landmarks.part(n).x,
                                                 landmarks.part(n).y) \
                                                     for n in range_list] 
                               
@@ -112,11 +124,29 @@ def main():
                         if outer_edge_list == []:
                             continue
 
-                        roi_corners = np.array([outer_edge_list], 
+                        roi_corners = np.array([outer_edge_list],
                                                dtype = np.int32)
                         image_copy = copy.deepcopy(final_image)
 
-                        if action == "gaussian":
+                        if action == "default":
+                            if rect == "rect":
+                                cv2.rectangle(img=final_image,
+                                              pt1=(x1, y1),
+                                              pt2=(x2, y2),
+                                              color=(0, 255, 0),
+                                              thickness=4)
+                            elif rect == "partial":
+                                 for n in range(0, 68):
+                                    x = landmarks.part(n).x
+                                    y = landmarks.part(n).y
+                                    # Draw a circle
+                                    cv2.circle(img=final_image,
+                                               center=(x, y),
+                                               radius=3,
+                                               color=(0, 255, 0),
+                                               thickness=-1)
+
+                        elif action == "gaussian":
                             # create a blurred copy of the entire image
                             
                             blurred_image = cv2.GaussianBlur(image_copy,
@@ -144,12 +174,3 @@ def main():
     cv2.destroyAllWindows()
 
 main()
-'''
-https://towardsdatascience.com/real-time-face-recognition-an-end-to-end-project-b738bb0f7348
-https://livecodestream.dev/post/detecting-face-features-with-python/
-https://github.com/italojs/facial-landmarks-recognition/blob/master/shape_predictor_68_face_landmarks.dat
-https://blog.csdn.net/qq_41008202/article/details/104397446
-https://docs.python.org/3/library/argparse.html#nargs
-https://stackoverflow.com/questions/41172918/apply-gaussian-blur-on-a-polygon-using-opencv-and-python
-https://blog.csdn.net/m0_38106923/article/details/103836242
-'''
