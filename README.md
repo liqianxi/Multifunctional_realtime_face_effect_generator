@@ -34,7 +34,7 @@ You should let your terminal use your camera.<br>
 There are sometimes when the current frame is not ready, the new window will also not show up.<br> In this case, just rerun the ```python3 face_blur.py <option1> <option2>...``` command.
 
 ## Reference:
-Many thanks to these articles and tutorials. They inspired me a lot.
+Many thanks to these articles and tutorials. They inspired me a lot.<br>
 https://towardsdatascience.com/real-time-face-recognition-an-end-to-end-project-b738bb0f7348 <br>
 https://livecodestream.dev/post/detecting-face-features-with-python/<br>
 https://github.com/italojs/facial-landmarks-recognition/blob/master/shape_predictor_68_face_landmarks.dat<br>
