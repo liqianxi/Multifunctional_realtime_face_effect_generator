@@ -17,8 +17,16 @@ Run the following commands to get started.
 ```
 git clone https://github.com/liqianxi/Multifunctional_realtime_face_effect_generator.git face_effect_generator
 cd face_effect_generator
-python3 face_blur.py
+python3 face_blur.py <option1> <option2>...
 ```
+## Option Usage:
+```python3 face_blur.py <shape_group option> <action_group option>```
+In shape_group options, you can use only one of ```--rect``` and ```--partial```.<br>
+In action_group options, you can use only one of ```--gaussian``` and ```--thresh```.<br>
+```--mosaic``` option is not finished yet.<br>
+You can use ```python3 face_blur.py -h``` to get help with the commands.<br>
+
 ## Note:
 You should let your terminal use your camera.<br>
-There are sometimes when the current frame is not ready, the new window will also not show up.<br> In this case, just rerun the ```python3 face_blur.py``` command.
+There are sometimes when the current frame is not ready, the new window will also not show up.<br> In this case, just rerun the ```python3 face_blur.py <option1> <option2>...``` command.
+
