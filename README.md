@@ -1,6 +1,9 @@
 # Multifunctional_realtime_face_effect_generator
 
-
+## Introduction
+This is an script based on realtime face detection. <br>
+First get the landmarks of the face, then use Gaussian blur or thresh effect to process the face area. This can be used when sometimes people in the streaming may not want to show their face. <br>
+This script also supports multi-faces in the screen.<br>
 
 ## How to use?
 First, go to https://github.com/italojs/facial-landmarks-recognition/blob/master/shape_predictor_68_face_landmarks.dat.<br> 
