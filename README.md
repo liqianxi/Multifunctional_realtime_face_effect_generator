@@ -24,7 +24,7 @@ python3 face_blur.py <option1> <option2>...
 ```
 ## Option Usage:
 ```python3 face_blur.py <shape_group option> <action_group option>```
-In shape_group options, you can use only one of ```--rect``` and ```--partial```.<br>
+In shape_group options, you can use only one of```--none```, ```--rect``` and ```--partial```.<br>
 In action_group options, you can use only one of ```--gaussian``` and ```--thresh```.<br>
 ```--mosaic``` option is not finished yet.<br>
 You can use ```python3 face_blur.py -h``` to get help with the commands.<br>
